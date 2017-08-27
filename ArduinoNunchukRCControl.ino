@@ -77,19 +77,17 @@ void accelerationMotorControl ()
      if Y is between 110-0, the car goes backwards at acceleration = PWM,
   */
 
-  if (nunchuk.analogY > FWRDDEADZONE)
-  {
+  if (nunchuk.analogY > FWRDDEADZONE) {
     acceleration = map(nunchuk.analogY, 140, 230, 0, 255);
-    analogWrite(FORWARDPIN, acceleration);
-
+    analogWrite(FORWARDPIN, acceleration); 
   }
-  else if (nunchuk.analogY < BACKDEADZONE)
-  {
+   
+  else if (nunchuk.analogY < BACKDEADZONE) {
     acceleration = map(nunchuk.analogY, 110, 20, 0, 255);
     analogWrite(BACKPIN, acceleration);
   }
-  else
-  {
+   
+  else {
     analogWrite(FORWARDPIN, 0);
     analogWrite(BACKPIN, 0);
   }
@@ -102,8 +100,7 @@ void steeringMotorControl()
      when X is higher than 170, the motor turns right.
   */
 
-  switch (nunchuk.analogX)
-  {
+  switch (nunchuk.analogX) {
     case 0 ... 80:
       digitalWrite(LEFTPIN, HIGH);
       break;
