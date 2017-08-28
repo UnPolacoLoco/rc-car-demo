@@ -140,9 +140,6 @@ void buzzer()
     case 1:
       tone(BUZZERPIN, HORNFREQ, 10);
 
-    case 0:
-      break;
-
     default:
       break;
   }
