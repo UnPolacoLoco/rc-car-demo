@@ -20,20 +20,25 @@
 #define FORWARDPIN 6 //PWM for vertical forward motor contror 
 #define BACKPIN 5 //PWN for vertical backwards motor control
 #define RIGHTPIN 2
-#define LEFTPIN 3
+#define LEFTPIN 4
 #define BUZZERPIN 7
 
 #define FWRDDEADZONE 140
 #define BACKDEADZONE 110
 
+#define REVERSEFREQ 800
+#define HORNFREQ 200
+#define REVERSELENGHT 500
+
 
 byte acceleration;
-
+int reverseTimer = 0;
 
 
 ArduinoNunchuk nunchuk = ArduinoNunchuk();
 
-void setup() {
+void setup()
+{
   Serial.begin(BAUDRATE);
   nunchuk.init();
   pinMode(FORWARDPIN, OUTPUT);
@@ -44,7 +49,8 @@ void setup() {
 
 }
 
-void loop() {
+void loop()
+{
 
   nunchuk.update();
 
@@ -52,51 +58,66 @@ void loop() {
   Serial.print(' ');
   Serial.println(nunchuk.analogY, DEC);
 
-//  Serial.print(' ');
-//  Serial.print(nunchuk.accelX, DEC);
-//  Serial.print(' ');
-//  Serial.print(nunchuk.accelY, DEC);
-//  Serial.print(' ');
-//  Serial.print(nunchuk.accelZ, DEC);
-//  Serial.print(' ');
-//  Serial.print(nunchuk.zButton, DEC);
-//  Serial.print(' ');
-//  Serial.println(nunchuk.cButton, DEC);
+  //  Serial.print(' ');
+  //  Serial.print(nunchuk.accelX, DEC);
+  //  Serial.print(' ');
+  //  Serial.print(nunchuk.accelY, DEC);
+  //  Serial.print(' ');
+  //  Serial.print(nunchuk.accelZ, DEC);
+  //  Serial.print(' ');
+  //  Serial.print(nunchuk.zButton, DEC);
+  //  Serial.print(' ');
+  //  Serial.println(nunchuk.cButton, DEC);
 
   accelerationMotorControl();
   steeringMotorControl();
+  // buzzer();
 
 }
 
-void accelerationMotorControl () {
+void accelerationMotorControl ()
+{
   /* Y deadzone 110 - 140,
      if Y is between 14-240, the car goes forward at acceleration = PWM,
      if Y is between 110-0, the car goes backwards at acceleration = PWM,
   */
 
-  if (nunchuk.analogY > FWRDDEADZONE) {
+  if (nunchuk.analogY > FWRDDEADZONE)
+  {
     acceleration = map(nunchuk.analogY, 140, 230, 0, 255);
-    analogWrite(FORWARDPIN, acceleration); 
+    analogWrite(FORWARDPIN, acceleration);
+
   }
-   
-  else if (nunchuk.analogY < BACKDEADZONE) {
+  else if (nunchuk.analogY < BACKDEADZONE)
+  {
     acceleration = map(nunchuk.analogY, 110, 20, 0, 255);
     analogWrite(BACKPIN, acceleration);
+
+    if (reverseTimer % 90 == 1)
+    { 
+      reverseTone();
+    }
+    
+    reverseTimer++;
   }
-   
-  else {
+  
+  else
+  {
     analogWrite(FORWARDPIN, 0);
     analogWrite(BACKPIN, 0);
+    reverseTimer = 0;
   }
 }
 
-void steeringMotorControl() {
+void steeringMotorControl()
+{
   /* X deadzone 80 - 170
      when X is lower than 80, the motor turns left.
      when X is higher than 170, the motor turns right.
   */
 
-  switch (nunchuk.analogX) {
+  switch (nunchuk.analogX)
+  {
     case 0 ... 80:
       digitalWrite(LEFTPIN, HIGH);
       break;
@@ -126,4 +147,22 @@ void steeringMotorControl() {
   //    digitalWrite(RIGHTPIN, LOW);
   //  }
 }
+
+void buzzer()
+{
+  if (nunchuk.cButton == 0)
+  {
+    noTone(BUZZERPIN);
+  }
+  else if (nunchuk.cButton == 1)
+  {
+    tone(BUZZERPIN, HORNFREQ);
+  }
+}
+
+void reverseTone()
+{
+  tone(BUZZERPIN, REVERSEFREQ, REVERSELENGHT);
+}
+
 
