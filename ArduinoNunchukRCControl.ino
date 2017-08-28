@@ -71,7 +71,7 @@ void loop()
 
   accelerationMotorControl();
   steeringMotorControl();
-  // buzzer();
+  buzzer();
 
 }
 
@@ -94,13 +94,13 @@ void accelerationMotorControl ()
     analogWrite(BACKPIN, acceleration);
 
     if (reverseTimer % 90 == 1)
-    { 
+    {
       reverseTone();
     }
-    
+
     reverseTimer++;
   }
-  
+
   else
   {
     analogWrite(FORWARDPIN, 0);
@@ -131,33 +131,23 @@ void steeringMotorControl()
       digitalWrite(RIGHTPIN, LOW);
       break;
   }
-  //  if (nunchuk.analogX < 80)
-  //  {
-  //    digitalWrite(LEFTPIN, HIGH);
-  //  }
-  //
-  //  else if (nunchuk.analogX > 170)
-  //  {
-  //    digitalWrite(RIGHTPIN, HIGH);
-  //  }
-  //
-  //  else
-  //  {
-  //    digitalWrite(LEFTPIN, LOW);
-  //    digitalWrite(RIGHTPIN, LOW);
-  //  }
 }
 
 void buzzer()
 {
-  if (nunchuk.cButton == 0)
+  switch (nunchuk.cButton)
   {
-    noTone(BUZZERPIN);
+    case 1:
+      tone(BUZZERPIN, HORNFREQ, 10);
+
+    case 0:
+      break;
+
+    default:
+      break;
   }
-  else if (nunchuk.cButton == 1)
-  {
-    tone(BUZZERPIN, HORNFREQ);
-  }
+
+
 }
 
 void reverseTone()
