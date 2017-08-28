@@ -33,8 +33,7 @@ byte acceleration;
 
 ArduinoNunchuk nunchuk = ArduinoNunchuk();
 
-void setup()
-{
+void setup() {
   Serial.begin(BAUDRATE);
   nunchuk.init();
   pinMode(FORWARDPIN, OUTPUT);
@@ -45,8 +44,7 @@ void setup()
 
 }
 
-void loop()
-{
+void loop() {
 
   nunchuk.update();
 
@@ -70,8 +68,7 @@ void loop()
 
 }
 
-void accelerationMotorControl ()
-{
+void accelerationMotorControl () {
   /* Y deadzone 110 - 140,
      if Y is between 14-240, the car goes forward at acceleration = PWM,
      if Y is between 110-0, the car goes backwards at acceleration = PWM,
@@ -93,8 +90,7 @@ void accelerationMotorControl ()
   }
 }
 
-void steeringMotorControl()
-{
+void steeringMotorControl() {
   /* X deadzone 80 - 170
      when X is lower than 80, the motor turns left.
      when X is higher than 170, the motor turns right.
