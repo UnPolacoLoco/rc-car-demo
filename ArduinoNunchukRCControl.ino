@@ -22,6 +22,7 @@
 #define RIGHTPIN 2
 #define LEFTPIN 4
 #define BUZZERPIN 7
+#define LIGHTSPIN 8
 
 #define FWRDDEADZONE 140
 #define BACKDEADZONE 110
@@ -39,13 +40,16 @@ ArduinoNunchuk nunchuk = ArduinoNunchuk();
 
 void setup()
 {
+   
   Serial.begin(BAUDRATE);
   nunchuk.init();
+   
   pinMode(FORWARDPIN, OUTPUT);
   pinMode(BACKPIN, OUTPUT);
   pinMode(LEFTPIN, OUTPUT);
   pinMode(RIGHTPIN, OUTPUT);
   pinMode(BUZZERPIN, OUTPUT);
+  pinMode(LIGHTSPIN, OUTPUT);
 
 }
 
@@ -56,21 +60,22 @@ void loop()
 
   Serial.print(nunchuk.analogX, DEC);
   Serial.print(' ');
-  Serial.println(nunchuk.analogY, DEC);
-
-  //  Serial.print(' ');
-  //  Serial.print(nunchuk.accelX, DEC);
-  //  Serial.print(' ');
-  //  Serial.print(nunchuk.accelY, DEC);
-  //  Serial.print(' ');
-  //  Serial.print(nunchuk.accelZ, DEC);
-  //  Serial.print(' ');
-  //  Serial.print(nunchuk.zButton, DEC);
-  //  Serial.print(' ');
-  //  Serial.println(nunchuk.cButton, DEC);
+  Serial.print(nunchuk.analogY, DEC);
+  Serial.print(' ');
+  Serial.print(nunchuk.accelX, DEC);
+  Serial.print(' ');
+  Serial.print(nunchuk.accelY, DEC);
+  Serial.print(' ');
+  Serial.print(nunchuk.accelZ, DEC);
+  Serial.print(' ');
+  Serial.print(nunchuk.zButton, DEC);
+  Serial.print(' ');
+  Serial.println(nunchuk.cButton, DEC);
 
   accelerationMotorControl();
   steeringMotorControl();
+  policeLights();
+  
   buzzer();
 
 }
@@ -132,7 +137,20 @@ void steeringMotorControl()
       break;
   }
 }
+void policeLights()
+{
+  switch (nunchuk.zButton)
+  {
+    case 1:
+      digitalWrite(LIGHTSPIN, HIGH);
+      break;
 
+    case 0:
+      digitalWrite(LIGHTSPIN, LOW);
+      break;
+
+  }
+}
 void buzzer()
 {
   switch (nunchuk.cButton)
