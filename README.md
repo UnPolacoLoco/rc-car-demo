@@ -2,7 +2,7 @@
 
 A demonstration using LEDs on a breadboard for my Arduino RC Goliath mod.
 This repo contains code that can be used to exemplify movement and other features of my Arduino RC Goliath on a breadboard with a couple LEDs. 
-Built and tested on ARDUINO 1.8.4 IDE.
+Built and tested on ARDUINO 1.8.4 IDE..
 
 # Installation
 
