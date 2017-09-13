@@ -31,11 +31,14 @@
 #define HORNFREQ 200
 #define REVERSELENGHT 500
 
+#define ArrayLenght(x) (sizeof(x) / sizeof(x[0]))
 
 byte acceleration;
 int reverseTimer = 0;
-byte digitalPins = 4;
-byte analogPins = 2;
+byte lastCButtonState = 0;
+
+//byte digitalPins = 4;
+//byte analogPins = 2;
 
 
 
@@ -43,19 +46,19 @@ ArduinoNunchuk nunchuk = ArduinoNunchuk();
 
 void setup()
 {
-  int digitalPinsArr[digitalPins] = {RIGHTPIN, LEFTPIN, BUZZERPIN, LIGHTSPIN};
-  int analogPinsArr[analogPins] = {FORWARDPIN, BACKPIN};
+  int digitalPins[] = {RIGHTPIN, LEFTPIN, BUZZERPIN, LIGHTSPIN};
+  int analogPins[] = {FORWARDPIN, BACKPIN};
 
-  for (int i = 0; i < digitalPins; i++)
+  for (int i = 0; i < ArrayLenght(digitalPins); i++)
   {
-    pinMode(digitalPinsArr[i], OUTPUT);
-    digitalWrite(digitalPinsArr[i], LOW);
+    pinMode(digitalPins[i], OUTPUT);
+    digitalWrite(digitalPins[i], LOW);
   }
 
-  for (int i = 0; i < analogPins; i++)
+  for (int i = 0; i < ArrayLenght(analogPins); i++)
   {
-    pinMode(analogPinsArr[i], OUTPUT);
-    analogWrite(analogPinsArr[i], 0);
+    pinMode(analogPins[i], OUTPUT);
+    analogWrite(analogPins[i], 0);
   }
 
 
@@ -92,8 +95,8 @@ void loop()
 
   accelerationMotorControl();
   steeringMotorControl();
+   
   policeLights();
-
   buzzer();
 
 }
@@ -157,7 +160,25 @@ void steeringMotorControl()
 }
 void policeLights()
 {
-  switch (nunchuk.zButton)
+ 
+  
+   
+   if(nunchuk.cButton != lastCButtonState)
+   {
+      if (nunchuk.cButton == 1)
+      {
+         digitalWrite(LIGHTSPIN, HIGH);
+      }
+      else
+      {
+          digitalWrite(LIGHTSPIN, LOW);
+      }
+      
+   }
+   
+   lastCButtonState = nunchuk.cButton;
+   
+ /* switch (nunchuk.cButton)
   {
     case 1:
       digitalWrite(LIGHTSPIN, HIGH);
@@ -166,12 +187,12 @@ void policeLights()
     case 0:
       digitalWrite(LIGHTSPIN, LOW);
       break;
-
   }
+  */
 }
 void buzzer()
 {
-  switch (nunchuk.cButton)
+  switch (nunchuk.zButton)
   {
     case 1:
       tone(BUZZERPIN, HORNFREQ, 10);
@@ -179,7 +200,6 @@ void buzzer()
     default:
       break;
   }
-
 
 }
 
