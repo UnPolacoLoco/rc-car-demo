@@ -34,23 +34,41 @@
 
 byte acceleration;
 int reverseTimer = 0;
+byte digitalPins = 4;
+byte analogPins = 2;
+
 
 
 ArduinoNunchuk nunchuk = ArduinoNunchuk();
 
 void setup()
 {
-   
+  int digitalPinsArr[digitalPins] = {RIGHTPIN, LEFTPIN, BUZZERPIN, LIGHTSPIN};
+  int analogPinsArr[analogPins] = {FORWARDPIN, BACKPIN};
+
+  for (int i = 0; i < digitalPins; i++)
+  {
+    pinMode(digitalPinsArr[i], OUTPUT);
+    digitalWrite(digitalPinsArr[i], LOW);
+  }
+
+  for (int i = 0; i < analogPins; i++)
+  {
+    pinMode(analogPinsArr[i], OUTPUT);
+    analogWrite(analogPinsArr[i], 0);
+  }
+
+
+  //  pinMode(FORWARDPIN, OUTPUT);
+  //  pinMode(BACKPIN, OUTPUT);
+  //  pinMode(LEFTPIN, OUTPUT);
+  //  pinMode(RIGHTPIN, OUTPUT);
+  //  pinMode(BUZZERPIN, OUTPUT);
+  //  pinMode(LIGHTSPIN, OUTPUT);
+
+  delay(5000);
   Serial.begin(BAUDRATE);
   nunchuk.init();
-   
-  pinMode(FORWARDPIN, OUTPUT);
-  pinMode(BACKPIN, OUTPUT);
-  pinMode(LEFTPIN, OUTPUT);
-  pinMode(RIGHTPIN, OUTPUT);
-  pinMode(BUZZERPIN, OUTPUT);
-  pinMode(LIGHTSPIN, OUTPUT);
-
 }
 
 void loop()
@@ -75,7 +93,7 @@ void loop()
   accelerationMotorControl();
   steeringMotorControl();
   policeLights();
-  
+
   buzzer();
 
 }
@@ -89,13 +107,13 @@ void accelerationMotorControl ()
 
   if (nunchuk.analogY > FWRDDEADZONE)
   {
-    acceleration = map(nunchuk.analogY, 140, 230, 0, 255);
+    acceleration = map(nunchuk.analogY, 140, 255, 0, 255);
     analogWrite(FORWARDPIN, acceleration);
 
   }
   else if (nunchuk.analogY < BACKDEADZONE)
   {
-    acceleration = map(nunchuk.analogY, 110, 20, 0, 255);
+    acceleration = map(nunchuk.analogY, 110, 0, 0, 255);
     analogWrite(BACKPIN, acceleration);
 
     if (reverseTimer % 90 == 1)
@@ -169,5 +187,7 @@ void reverseTone()
 {
   tone(BUZZERPIN, REVERSEFREQ, REVERSELENGHT);
 }
+
+
 
 
