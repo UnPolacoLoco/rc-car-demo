@@ -1,9 +1,12 @@
 /*
+   Proof of concept for my Arduino RC Goliath mod. 
+   RC Goliath project link: http://wp.me/p91MV0-5m
 
+   
    Library doing all the Nunchuk lifting:
    Copyright 2011-2013 Gabriel Bianconi, http://www.gabrielbianconi.com/
 
-   Nunchuk project URL: http://www.gabrielbianconi.com/projects/arduinonunchuk/
+   Nunchuk project link: http://www.gabrielbianconi.com/projects/arduinonunchuk/
 
 
    Pin overview of the nunchuk attachment:
@@ -36,9 +39,7 @@
 byte acceleration;
 int reverseTimer = 0;
 byte lastCButtonState = 0;
-
-//byte digitalPins = 4;
-//byte analogPins = 2;
+byte lastZButtonState = 0;
 
 
 
@@ -61,13 +62,6 @@ void setup()
     analogWrite(analogPins[i], 0);
   }
 
-
-  //  pinMode(FORWARDPIN, OUTPUT);
-  //  pinMode(BACKPIN, OUTPUT);
-  //  pinMode(LEFTPIN, OUTPUT);
-  //  pinMode(RIGHTPIN, OUTPUT);
-  //  pinMode(BUZZERPIN, OUTPUT);
-  //  pinMode(LIGHTSPIN, OUTPUT);
 
   delay(5000);
   Serial.begin(BAUDRATE);
@@ -95,7 +89,7 @@ void loop()
 
   accelerationMotorControl();
   steeringMotorControl();
-   
+
   policeLights();
   buzzer();
 
@@ -160,46 +154,40 @@ void steeringMotorControl()
 }
 void policeLights()
 {
- 
-  
-   
-   if(nunchuk.cButton != lastCButtonState)
-   {
-      if (nunchuk.cButton == 1)
-      {
-         digitalWrite(LIGHTSPIN, HIGH);
-      }
-      else
-      {
-          digitalWrite(LIGHTSPIN, LOW);
-      }
-      
-   }
-   
-   lastCButtonState = nunchuk.cButton;
-   
- /* switch (nunchuk.cButton)
-  {
-    case 1:
-      digitalWrite(LIGHTSPIN, HIGH);
-      break;
 
-    case 0:
+  if (nunchuk.cButton != lastCButtonState)
+  {
+    if (nunchuk.cButton == 1)
+    {
+      digitalWrite(LIGHTSPIN, HIGH);
+    }
+    else
+    {
       digitalWrite(LIGHTSPIN, LOW);
-      break;
+    }
+
   }
-  */
+
+  lastCButtonState = nunchuk.cButton;
+
 }
 void buzzer()
 {
-  switch (nunchuk.zButton)
-  {
-    case 1:
-      tone(BUZZERPIN, HORNFREQ, 10);
 
-    default:
-      break;
+  if (nunchuk.zButton != lastZButtonState)
+  {
+    if (nunchuk.zButton == 1)
+    {
+      tone(BUZZERPIN, HORNFREQ);
+    }
+    else
+    {
+      noTone(BUZZERPIN);
+    }
+
   }
+
+  lastZButtonState = nunchuk.zButton;
 
 }
 
